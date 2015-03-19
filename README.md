@@ -75,37 +75,37 @@ After DFT calculations are finished a file File_with_DFT_results.nc is created.
 
 1. We create the main.txt file
 
-	$ echo -n "File_with_DFT_results.nc" > main.txt
+		$ echo -n "File_with_DFT_results.nc" > main.txt
 
 2. Submit to Torque
 
-	$ qsub subStan-G.sh
-	$ qsub subStan-K.sh
-	$ qsub subStan-Kbar.sh
+		$ qsub subStan-G.sh
+		$ qsub subStan-K.sh
+		$ qsub subStan-Kbar.sh
 
 3. Process log files
 
-	$ ./passlogs.sh
+		$ ./passlogs.sh
 
 4. Plot results
 
-	$ python processjson.py outStK.log.json
-	$ python processjson.py outStKbar.log.json
-	$ python processjson.py outStKbar.log.json
+		$ python processjson.py outStK.log.json
+		$ python processjson.py outStKbar.log.json
+		$ python processjson.py outStKbar.log.json
 
 5. Move the resultant png files into a special folder for easier access
 
-	$ mkdir analysis
-	$ mv *.png analysis
+		$ mkdir analysis
+		$ mv *.png analysis
 
 6. Plot Band states for the G point
 
-	$ atkpython visBloch-red.py Bloch_G_something.nc
+		$ atkpython visBloch-red.py Bloch_G_something.nc
 
 7. Move figures to special folder
 
-	$ mkdir BSFigs_G
-	$ mv *.png BSFigs_G
+		$ mkdir BSFigs_G
+		$ mv *.png BSFigs_G
 
 8. Repeat 6 and 7 for K and Kbar
 
