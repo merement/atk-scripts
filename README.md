@@ -8,13 +8,14 @@ There's the collection of scripts I've used for basic analysis of the Bloch stat
 Next follows somewhat longish text, its TL;DR version is in the WORKFLOW section below
 
 stanalysis.py
-    Usage:  atkpython stanalysis.py -c Name_of_File_with_DFT_results.nc -k [K | G | Kbar] --size_up Up_Num --size_down Down_Num
 
-    It takes the results of the DFT calculations and for the chosen k-point (K, G or Kbar) goes through bands from Up_Num below the Fermi level to Down_Num above the Fermi level. For each band it calculates the center of mass of the Bloch state and average values of the momentum and angular momentum. More precisely, <r>, <\nabla>, <r \times \nabla>. It should be noted that G, K, Kbar actually mean vectors [0,0,0], [1/3, 1/3, 0], [-1/3, -1/3, 0]. So, they work for arbitrarily shaped supercells.
+Usage:  atkpython stanalysis.py -c Name_of_File_with_DFT_results.nc -k [K | G | Kbar] --size_up Up_Num --size_down Down_Num
 
-    The recommended way of using it is to create in the folder with the ATK data the file main.txt, which must contain a single line with the name of the file where the ATK wrote the results of the DFT calculations. This name is specified in VNL and if you don't remember it, you can always look it up in the .py-file produced by VNL in the line like nlsave("FileName.nc", bulk_configuration)
+It takes the results of the DFT calculations and for the chosen k-point (K, G or Kbar) goes through bands from Up_Num below the Fermi level to Down_Num above the Fermi level. For each band it calculates the center of mass of the Bloch state and average values of the momentum and angular momentum. More precisely, <r>, <\nabla>, <r \times \nabla>. It should be noted that G, K, Kbar actually mean vectors [0,0,0], [1/3, 1/3, 0], [-1/3, -1/3, 0]. So, they work for arbitrarily shaped supercells.
 
-    When main.txt exists it's usually sufficient to provide the k-point only. In this case it will take 17 bands above and 17 bands below.
+The recommended way of using it is to create in the folder with the ATK data the file main.txt, which must contain a single line with the name of the file where the ATK wrote the results of the DFT calculations. This name is specified in VNL and if you don't remember it, you can always look it up in the .py-file produced by VNL in the line like nlsave("FileName.nc", bulk_configuration)
+
+When main.txt exists it's usually sufficient to provide the k-point only. In this case it will take 17 bands above and 17 bands below.
 
 It may take a long time for stanalysis.py to finish, depending on the number of atoms in the elementary cell. It may easily be days if the number of atoms is more than couple hundreds.
 
@@ -54,7 +55,7 @@ It's envoked by (the usual python is sufficient, no need for atkpython)
 
 For example, python processjson.py outStG.dat.json
 
-It will produce three .png figures showing <r>, <p>, <L> - <r> \times <p>
+It will produce three .png figures showing < r >, < p >, < L > - < r > \times < p >
 
 Finally, in order to see Bloch states one needs to use the script
 
