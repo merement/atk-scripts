@@ -1,3 +1,4 @@
+#!/usr/bin/env atkpython
 # Script scaneps by Misha
 #
 # Calculates optical spectrum, \epsilon(\omega), from the provided nc-file

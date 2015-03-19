@@ -1,5 +1,5 @@
-#!/usr/bin/python
-# Parses dat files procudec by stanalysis.python
+#!/usr/bin/env python
+# Parses dat files produced by stanalysis.python
 import numpy
 import matplotlib.pyplot as plt
 

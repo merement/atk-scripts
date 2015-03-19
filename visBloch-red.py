@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # script visBloch by Misha
 #
 # Looks at all Bloch states in the respective nc-file and plots

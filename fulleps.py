@@ -1,3 +1,4 @@
+#!/usr/bin/env atkpython
 # Script fulleps by Misha
 #
 # Calculates optical spectrum, \epsilon(\omega), from the provided nc-file

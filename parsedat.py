@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # Parses dat files produced by stanalysis.python
 #
 # TODO: field tests

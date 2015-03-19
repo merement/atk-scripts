@@ -1,3 +1,4 @@
+#!/usr/bin/env atkpython
 # Analysis of Bloch states in complex structures
 #
 # For a given k-point it 
