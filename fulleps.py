@@ -7,6 +7,8 @@
 # TODO: level it up with the current ideology for such scripts
 #	1) support of command line options
 #	2) ...
+#
+# It should be replaced by a boosted version of scaneps.py
 
 from NanoLanguage import *
 #import NLEngine

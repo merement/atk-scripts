@@ -1,11 +1,11 @@
 # Script scaneps by Misha
 #
 # Calculates optical spectrum, \epsilon(\omega), from the provided nc-file
-# with the bandstructure and all
-# and outputs dat-files with \epsilon(\omega) and n(\omega)
+# with the bandstructure (TODO) and all
+# and outputs nc-files with the susceptibility
+# and dat-files with \epsilon(\omega) and n(\omega)
 
 from NanoLanguage import *
-#import NLEngine
 
 import numpy
 import cmath
@@ -30,33 +30,27 @@ except IOError as e:
 	raise
 
 bandFileName_prefix = bandFileName[:(bandFileName.find("nc") - 1)]
-bandFileName = bandFileName_prefix + ".nc"
 
 specFilePrefix = "spec"
 specFilePostfix = bandFileName
 
-specFileName = "spec_" + bandFileName
+# nc-outputs
+specFileName = specFilePrefix + "_" + specFilePostfix
 
 # The results of calculations will be written to
 epsPostfix = bandFileName_prefix + ".dat"
 
 # First we read the configuration
 bulk_configuration = nlread(bandFileName, BulkConfiguration)[0] 
-			# , object_id='gID003'
 
 # Next we calculate the optical spectrum
 
 BandUpMin = int(args.upmin)
-if args.fixed :
-	BandUpMax = BandUpMin
-else:
-	BandUpMax = int(args.upmax)
+
+BandUpMax = BandUpMin if args.fixed else int(args.upmax)
 
 BandDownMin = int(args.downmin)
-if args.fixed :
-	BandDownMax = BandDownMin
-else:
-	BandDownMax = int(args.downmax)
+BandDownMax = BandDownMin if args.fixed else int(args.downmax)
 
 for down in range(BandDownMin, BandDownMax + 1):
 	for up in range(BandUpMin, BandUpMax + 1):
@@ -80,9 +74,7 @@ for down in range(BandDownMin, BandDownMax + 1):
 		# number of energy points
 		nump = enes.shape[0]
 
-		# The dielectric tensor is pretty much diagonal and its in-plane
-		# eigenvalues are the same
-
+		# optical parameters
 		epsre = opt_spec.evaluateDielectricConstant()
 		epsim = opt_spec.evaluateImaginaryDielectricConstant()
 
