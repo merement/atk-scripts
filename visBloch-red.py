@@ -11,6 +11,9 @@
 # [2015-3-11] plots only selected spins
 #
 # TODO: define sections to plot, flag and options for the transversal
+# [2015-3-24]
+# Implemented the above TODO except options for the transversal.
+# TODO: options for the distribution along the z-axis
 
 Tolerance = 1e-10
 
@@ -23,12 +26,26 @@ import matplotlib.pyplot as plt
 readmainFlag = True
 
 import argparse
+import json
+import sys
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-s', default = 'All', help = 'Projection of the spin')
 parser.add_argument('-c', default = 'NULL', help = 'The name of the .nc-file with the configuration')
 parser.add_argument('blochFileName', help = 'The name of the .nc-file with Bloch functions')
+parser.add_argument("--section", default = '[-1]', help="The list of sections to plot. \
+    Expected format is --section [s1, s2, ...]. Parameters 0 < s_k < 1 specify the \
+    relative z-coordinate of the (x, y)-plane. If s_k is outside of this range\
+    the distribution integrated over z is plotted. ")
+parser.add_argument("-t", action='store_true', help = "Provide to plot the distribution in the z-direction.")
 args = parser.parse_args()
+
+try:
+    listSections = json.loads(args.section)
+except ValueError:
+    print "The list of sections couldn't be recognized. \
+    Expected format is --section [s1, s2, ...]"
+    sys.exit(1)
 
 spinState = Spin.Up if args.s == 'Up' else \
     Spin.Down if args.s == 'Down' else Spin.All
@@ -260,8 +277,10 @@ for i in range(numStates) :
     print "Processing state %s (band # %s) out of %s ... " % (i, band, numStates)
 
     figs = [show_density_fig(blochStates[i].spinProjection(spinState), 
-            coords, colorAtom, ind) for ind in [0.25, 0.5, -1.0]]
-    figs.append(show_cross_fig(blochStates[i].spinProjection(spinState)))
+            coords, colorAtom, ind) for ind in listSections]
+    if args.t :
+        figs.append(show_cross_fig(blochStates[i].spinProjection(spinState)))
+        
     ident = str(band) + "_" + strSpin +"_" + FileName_prefix
     save_fig_list(figs, ident)
 
