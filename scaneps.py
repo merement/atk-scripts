@@ -59,7 +59,7 @@ for down in range(BandDownMin, BandDownMax + 1):
 		opt_spec = OpticalSpectrum(
     		configuration=bulk_configuration,
     		kpoints=MonkhorstPackGrid(15,15,15),
-    		energies=numpy.linspace(0.1,2.5,200)*eV,
+    		energies=numpy.linspace(0.05,4.5,400)*eV,
     		broadening=0.02*eV,
     		bands_below_fermi_level=down,
 		    bands_above_fermi_level=up,
@@ -82,7 +82,7 @@ for down in range(BandDownMin, BandDownMax + 1):
 		for ii in range(3):
 			for jj in range(ii, 3):
 
-				epsFileName = "epsRE_%s_%s_%s_%s_" % (down, up, ii, jj) + epsPostfix
+				epsFileName = "eps_%s_%s_%s_%s_" % (down, up, ii, jj) + epsPostfix
 				with open(epsFileName, "w") as epsfile :
 					for kk in range(nump) :
 						epsfile.write(", ".join(str(x) 
