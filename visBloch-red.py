@@ -20,6 +20,11 @@ Tolerance = 1e-10
 from NanoLanguage import *
 
 import numpy
+
+# to avoid keeping X-tunnel open
+from matplotlib import use
+use('Agg')
+
 import matplotlib.pyplot as plt
 
 # Common part for involved files
