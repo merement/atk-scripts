@@ -29,6 +29,7 @@
 # Here we go to the directory where qsub was executed
 cd $PBS_O_WORKDIR
 
-# Actual command to be executed. 
+# Actual command to be executed.
+# It assumes that scaneps.py is in the user's PATH
 
-atkpython scaneps.py --upmin 1 --downmin 1 --upmax 5 --downmax 5 > outScanSpec.log
+scaneps.py --upmin 1 --downmin 1 --upmax 5 --downmax 5 > outScanSpec.log
