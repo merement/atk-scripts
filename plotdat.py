@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # For plotting dat-files
 # The file is assumed to have several columns of data
 # within each column the data is separated by commas (that is
