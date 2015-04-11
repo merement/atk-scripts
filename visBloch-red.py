@@ -13,6 +13,11 @@
 # TODO: define sections to plot, flag and options for the transversal
 # [2015-3-24]
 # Implemented the above TODO except options for the transversal.
+#
+# TODO: choice between bright and dark color schemes
+#
+# [2014-4-10]
+# Implemented color choice
 # TODO: options for the distribution along the z-axis
 
 Tolerance = 1e-10
@@ -43,14 +48,48 @@ parser.add_argument("--section", default = '[-1]', help="The list of sections to
     relative z-coordinate of the (x, y)-plane. If s_k is outside of this range\
     the distribution integrated over z is plotted. ")
 parser.add_argument("-t", action='store_true', help = "Provide to plot the distribution in the z-direction.")
+
+# Arguments dealing with color schemes
+color_select = parser.add_mutually_exclusive_group()
+color_select.add_argument('--bright', action = 'store_true', 
+        help = 'Provide to select "grey" scheme suitable for bw-printing')
+color_select.add_argument('--dark', default = True, action = 'store_true', 
+        help = 'Provide to select dark scheme (jet)')
+color_select.add_argument('--color',  
+        help = 'Specify the color scheme.')
+
 args = parser.parse_args()
 
+# validation of sections
 try:
     listSections = json.loads(args.section)
 except ValueError:
     print "The list of sections couldn't be recognized. \
     Expected format is --section [s1, s2, ...]"
     sys.exit(1)
+
+# validation of the color choice
+# http://matplotlib.org/examples/color/colormaps_reference.html
+
+listcmaps = ['Blues', 'BuGn', 'BuPu','GnBu', 'Greens', 'Greys', 'Oranges', 
+    'OrRd', 'PuBu', 'PuBuGn', 'PuRd', 'Purples', 'RdPu', 'Reds', 'YlGn', 
+    'YlGnBu', 'YlOrBr', 'YlOrRd', 'afmhot', 'autumn', 'bone', 'cool', 
+    'copper', 'gist_heat', 'gray', 'hot', 'pink', 'spring', 'summer', 
+    'winter', 'BrBG', 'bwr', 'coolwarm', 'PiYG', 'PRGn', 'PuOr',
+    'RdBu', 'RdGy', 'RdYlBu', 'RdYlGn', 'Spectral', 'seismic', 'Accent', 
+    'Dark2', 'Paired', 'Pastel1', 'Pastel2', 'Set1', 'Set2', 'Set3',
+    'gist_earth', 'terrain', 'ocean', 'gist_stern', 'brg', 'CMRmap', 
+    'cubehelix', 'gnuplot', 'gnuplot2', 'gist_ncar', 'nipy_spectral', 
+    'jet', 'rainbow', 'gist_rainbow', 'hsv', 'flag', 'prism']
+
+if args.bright :
+    colChoice = 'gray'
+elif args.dark :
+    colChoice = 'jet'
+elif args.color in listcmaps :
+    colChoice = args.color
+else:
+    colChoice = 'jet' 
 
 spinState = Spin.Up if args.s == 'Up' else \
     Spin.Down if args.s == 'Down' else Spin.All
@@ -191,7 +230,9 @@ def show_density(state, lat, colors, ind) :
     # ax = fig.add_subplot(111, projection='3d')
     ax = fig.add_subplot(111, aspect = 'equal')
     #ax.plot_surface(x, y, n_xy)
-    ax.pcolor(x, y, n_xy)
+    z_min, z_max = 0, numpy.abs(n_xy).max()
+    #ax.pcolor(x, y, n_xy, cmap = colChoice, vmin = -z_max, vmax = z_max)
+    ax.pcolor(x, y, -n_xy, cmap = colChoice)
     ax.scatter(lat[:,0], lat[:,1], c = colors, edgecolor = colors, marker = 'o', s = 3.0)
     ax.autoscale(tight=True)
 
@@ -237,11 +278,12 @@ def save_fig_list(fig_list, identity) :
         outFileName = 'fig_' + str(ii) + '_' + identity + '.png'
         fig_list[ii].savefig(outFileName, bbox_inches='tight')
 
-def buildColors(listE) :
+def buildColors(listE, colScheme) :
     """
     Creates the array with colors corresponding to different atoms.
     INPUT:
     	listE - array with names of the atoms
+        colScheme - chosen colormap
 
     OUTPUT:
     	listC - array with colors: 'k' or 'w'
@@ -251,6 +293,10 @@ def buildColors(listE) :
         'Sulfur' : 'w', 
         'Molybdenum' : 'k', 
         'Other' : 'r'}
+
+    if colScheme == 'gray' :
+        # for 'print' color scheme we want gray Sulfurs
+        cDict['Sulfur'] = '0.75'
     # The key 'Other' is enacted when the element is absent in the 'database'
 
     listC = [cDict[elem] if elem in cDict else cDict['Other'] 
@@ -263,7 +309,7 @@ conf = nlread(bandFileName, BulkConfiguration, read_state=False)[0]
 coords = conf.cartesianCoordinates().inUnitsOf(Angstrom)
 elems = conf.elements()
 listElems = [elems[i].name() for i in range(len(elems))]
-colorAtom = buildColors(listElems)
+colorAtom = buildColors(listElems, colChoice)
 
 # This requires a lot of memory
 blochStates = nlread(args.blochFileName, BlochState)
