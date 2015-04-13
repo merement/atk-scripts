@@ -63,11 +63,11 @@ bandstructure = nlread(args.s)[0]
 # The bandstructure is always calculated at least at two points
 # (the 'feature' of their Bandstructure calculator)
 
-if len(bandstructure.kpoints) > 2 :
+if len(bandstructure.kpoints()) > 2 :
     print "WARNING: possible inconsistency between bandstructure and Bloch functions"
     print "Energy assignment is not reliable"
 
-KPoint = bandstructure.kpoints[0]
+KPoint = bandstructure.kpoints()[0]
 
 print "Bands at the k-point: %s are read" % KPoint
 print "The Fermi level is at %s eV" % bandstructure.fermiLevel().inUnitsOf(eV)
@@ -93,7 +93,7 @@ print "Bloch states correspond to the following bands"
 
 for i in range(numStates):
     bandNumber = blochStates[i].quantumNumber()
-    bandEnergy = enarray[bandNumber]
+    bandEnergy = enarray[bandNumber-1]
     listStates[i, 0] = bandNumber
     listStates[i, 1] = bandEnergy
 
@@ -188,4 +188,4 @@ for i in range(numStates) :
 with open(outFileName, "w") as iprfile :
     for i in range(numStates) :
         iprfile.write("band: %s, KPoint: %s, Energy: %s, IPR: %s " 
-                % (listStates[i,0], KPoint, listStates[i,1]), listStates[i,2]) )
+                % (listStates[i,0], KPoint, listStates[i,1], listStates[i,2]) )
