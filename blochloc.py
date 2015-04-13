@@ -185,3 +185,7 @@ for i in range(numStates) :
     print "Norm: %s, IPR: %s" % (norm, ipr)
     listStates[i,2] = ipr
 
+with open(outFileName, "w") as iprfile :
+    for i in range(numStates) :
+        iprfile.write("band: %s, KPoint: %s, Energy: %s, IPR: %s " 
+                % (listStates[i,0], KPoint, listStates[i,1]), listStates[i,2]) )
