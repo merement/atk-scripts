@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Parses dat files produced by stanalysis.python
+# Shows data collected in the json file by parselog/parsedat
 import numpy
 import matplotlib.pyplot as plt
 
@@ -113,7 +113,7 @@ Rzav = (R[:,2]).sum()/len(R)
 
 for i in range(len(data)) :
 	if abs(R[i][2] - Rzav) > 0.1 :
-		print "Significant vertical variation in badn %s" % data[i]['band']
+		print "Significant vertical variation in band %s" % data[i]['band']
 
 fig2 = plt.figure()
 ax2 = fig2.add_subplot(111)

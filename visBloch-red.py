@@ -122,7 +122,7 @@ def planarDensity(bState, ind) :
     Returns 2D numpy array, and x and y coordinates of the grid points
     inside the elementary cell (in Angstrom).
 
-    If the density is to small, the function returns zero, None, None
+    If the density is too small, the function returns zero, None, None
 
     If 0 < ind < 1, it's taken as the relative z-coordinate and the function
     outputs the distribution of the density at this plane. Otherwise,
@@ -137,8 +137,6 @@ def planarDensity(bState, ind) :
     # Calculate the unit area in the y-z plane.
     length_unit = dX.unit()
     dAXY = numpy.linalg.norm( numpy.cross(dX,dY) )*length_unit**2
-
-    # Calculate the volume of the volume element.
     dz = dZ.norm()
 
     psi = bState.toArray()
@@ -147,7 +145,6 @@ def planarDensity(bState, ind) :
     if density.sum() < Tolerance :
         return 0, None, None
 
-    #
     if 0 < ind < 1 :
         n_xy = numpy.array(density[:,:,int(nk*ind)])
     else :
