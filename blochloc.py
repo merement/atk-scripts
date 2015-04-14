@@ -104,7 +104,8 @@ for i in range(numStates):
 
     for j in range(numBStruct) :
         for ind, k in enumerate(bandstructures[j].kpoints()) :
-            if abs(k - stateKpoint) < Tolerance :
+            df = k - stateKpoint
+            if (df*df).sum() < Tolerance :
                 break
         else :
             continue
