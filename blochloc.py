@@ -22,6 +22,7 @@ Tolerance = 1e-10
 
 from NanoLanguage import *
 
+import sys
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -58,21 +59,6 @@ namePostfix = confFileName[:confFileName.find(".nc")]
 
 bulk_conf = nlread(confFileName, BulkConfiguration)[0]
 
-bandstructure = nlread(args.s)[0]
-
-# The bandstructure is always calculated at least at two points
-# (the 'feature' of their Bandstructure calculator)
-
-if len(bandstructure.kpoints()) > 2 :
-    print "WARNING: possible inconsistency between bandstructure and Bloch functions"
-    print "Energy assignment is not reliable"
-
-KPoint = bandstructure.kpoints()[0]
-
-print "Bands at the k-point: %s are read" % KPoint
-print "The Fermi level is at %s eV" % bandstructure.fermiLevel().inUnitsOf(eV)
-enarray = numpy.array(bandstructure.evaluate()[0])
-
 # This requires a lot of memory
 blochStates = nlread(args.b, BlochState)
 numStates = len(blochStates)
@@ -85,19 +71,65 @@ if DEB_flag :
     numStates = 1
 
 # number of fields in the record
-# band, energy, IPR
-numFields = 1+1+1 
+# kpoint, band, energy, IPR
+numFields = 1+1+1+1 
 listStates = numpy.zeros([numStates, numFields])
 
-print "Bloch states correspond to the following bands"
+bandstructures = nlread(args.s)
+numBStruct = len(bandstructures)
+# There are few potential problems here.
+# 1. It cannot be guaranteed that the first record in the bandstructure
+#   file contains the bandstructure corresponding to the file with 
+#   Bloch functions. Those files by default collect everyting written
+#   into them. Since the bandstructure is needed for information 
+#   purposes only, one shoudl allow for some slight discrepancy
+#
+# 2. We should also allow for possibility that Bloch states correspond
+#   to different k points (TODO: implement this fully)
+
+print "Bloch functions correspond to the following states"
 
 for i in range(numStates):
+    stateKpoint = blochStates[i].kPoint()
     bandNumber = blochStates[i].quantumNumber()
-    bandEnergy = enarray[bandNumber-1]
-    listStates[i, 0] = bandNumber
-    listStates[i, 1] = bandEnergy
+    listStates[i, 0] = stateKpoint
+    listStates[i, 1] = bandNumber
 
-    print "Band %s: %s" % (bandNumber, bandEnergy)
+    print "State #%s: k-point: %s, Band %s" % \
+        (i, stateKpoint, bandNumber)
+
+    # Now we look for respective bandstructures
+
+    for j in range(numBStruct) :
+        for ind, k in enumerate(bandstructures[j].kpoints()) :
+            if abs(k - stateKpoint) < Tolerance :
+                break
+        else :
+            continue
+
+        ebands = bandstructures[j].evaluate()[ind,:]
+        if len(ebands) > bandNumber :
+            listStates[i,2] = ebands[ind]
+            print "Energy: %s" % ebands[ind]
+            break
+    else :
+        print "ERROR: Couldn't find the bandstructure corresponding to this Bloch function"
+        sys.exit(1)
+
+# The bandstructure is always calculated at least at two points
+# (the 'feature' of their Bandstructure calculator)
+
+for i in range(numStates)
+
+if len(bandstructure.kpoints()) > 2 :
+    print "WARNING: possible inconsistency between bandstructure and Bloch functions"
+    print "Energy assignment is not reliable"
+
+KPoint = bandstructure.kpoints()[0]
+print "Bands at the k-point: %s are read" % KPoint
+print "The Fermi level is at %s eV" % bandstructure.fermiLevel().inUnitsOf(eV)
+enarray = numpy.array(bandstructure.evaluate()[0])
+
 
 outFileName = "IPR_%s_%s.dat" % (args.k, namePostfix)
 
