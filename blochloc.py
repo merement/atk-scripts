@@ -55,14 +55,14 @@ if args.c == 'NULL' :
 else :
     confFileName = args.c
 
-namePostfix = confFileName[:confFileName.find(".nc")]
-
 bulk_conf = nlread(confFileName, BulkConfiguration)[0]
 
 # This requires a lot of memory
 blochStates = nlread(args.b, BlochState)
 numStates = len(blochStates)
 print "Bloch states are read. Total %s records" % numStates
+
+namePostfix = confFileName[:args.b.find(".nc")]
 
 # DEBUG version
 DEB_flag = False
@@ -71,8 +71,8 @@ if DEB_flag :
     numStates = 1
 
 # number of fields in the record
-# |kpoint|, band, energy, IPR
-numFields = 1+1+1+1 
+# band, energy, IPR
+numFields = 1+1+1 
 listStates = numpy.zeros([numStates, numFields])
 
 bandstructures = nlread(args.s)
@@ -92,8 +92,8 @@ print "Bloch functions correspond to the following states"
 for i in range(numStates):
     stateKpoint = blochStates[i].kPoint()
     bandNumber = blochStates[i].quantumNumber()
-    listStates[i, 0] = numpy.sqrt((stateKpoint*stateKpoint).sum())
-    listStates[i, 1] = bandNumber
+    # listStates[i, 0] = numpy.sqrt((stateKpoint*stateKpoint).sum())
+    listStates[i, 0] = bandNumber
 
     print "State #%s: k-point: %s, Band %s" % \
         (i, stateKpoint, bandNumber)
@@ -112,14 +112,14 @@ for i in range(numStates):
 
         ebands = bandstructures[j].evaluate()[ind,:]
         if len(ebands) > bandNumber :
-            listStates[i,2] = ebands[ind]
-            print "Energy: %s" % ebands[ind]
+            listStates[i,1] = ebands[bandNumber]
+            print "Energy: %s" % ebands[bandNumber]
             break
     else :
         print "ERROR: Couldn't find the bandstructure corresponding to this Bloch function"
         sys.exit(1)
 
-outFileName = "IPR_%s_%s.dat" % (args.k, namePostfix)
+outFileName = "IPR_%s.dat" % namePostfix
 
 spins = [Spin.Up, Spin.Down]
 strSpins = ['Up', 'Down']
@@ -200,12 +200,12 @@ for i in range(numStates) :
     bState = blochStates[i]
 
     # This way is faster for some reason than turning the whole state into array
-    norm, ipr = processBloch(i, bState, Spin.All)
+    norm, ipr = processBloch(bState, Spin.All)
     # norm, ipr = processBloch(i, bState, Spin.Down)
     print "Norm: %s, IPR: %s" % (norm, ipr)
     listStates[i,2] = ipr
 
 with open(outFileName, "w") as iprfile :
     for i in range(numStates) :
-        iprfile.write("band: %s, KPoint: %s, Energy: %s, IPR: %s " 
-                % (listStates[i,0], KPoint, listStates[i,1], listStates[i,2]) )
+        iprfile.write("band: %s, Energy: %s, IPR: %s " 
+                % (listStates[i,0], listStates[i,1], listStates[i,2]) )
