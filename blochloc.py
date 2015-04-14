@@ -99,6 +99,8 @@ for i in range(numStates):
         (i, stateKpoint, bandNumber)
 
     # Now we look for respective bandstructures
+    # The bandstructure is always calculated at least at two points
+    # (the 'feature' of their Bandstructure calculator)
 
     for j in range(numBStruct) :
         for ind, k in enumerate(bandstructures[j].kpoints()) :
@@ -115,21 +117,6 @@ for i in range(numStates):
     else :
         print "ERROR: Couldn't find the bandstructure corresponding to this Bloch function"
         sys.exit(1)
-
-# The bandstructure is always calculated at least at two points
-# (the 'feature' of their Bandstructure calculator)
-
-for i in range(numStates)
-
-if len(bandstructure.kpoints()) > 2 :
-    print "WARNING: possible inconsistency between bandstructure and Bloch functions"
-    print "Energy assignment is not reliable"
-
-KPoint = bandstructure.kpoints()[0]
-print "Bands at the k-point: %s are read" % KPoint
-print "The Fermi level is at %s eV" % bandstructure.fermiLevel().inUnitsOf(eV)
-enarray = numpy.array(bandstructure.evaluate()[0])
-
 
 outFileName = "IPR_%s_%s.dat" % (args.k, namePostfix)
 
