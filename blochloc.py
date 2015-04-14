@@ -71,7 +71,7 @@ if DEB_flag :
     numStates = 1
 
 # number of fields in the record
-# kpoint, band, energy, IPR
+# |kpoint|, band, energy, IPR
 numFields = 1+1+1+1 
 listStates = numpy.zeros([numStates, numFields])
 
@@ -92,7 +92,7 @@ print "Bloch functions correspond to the following states"
 for i in range(numStates):
     stateKpoint = blochStates[i].kPoint()
     bandNumber = blochStates[i].quantumNumber()
-    listStates[i, 0] = stateKpoint
+    listStates[i, 0] = numpy.sqrt((stateKpoint*stateKpoint).sum())
     listStates[i, 1] = bandNumber
 
     print "State #%s: k-point: %s, Band %s" % \
