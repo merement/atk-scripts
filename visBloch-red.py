@@ -18,6 +18,9 @@
 #
 # [2014-4-10]
 # Implemented color choice
+#
+# [2014-4-27]
+# noticks option
 # TODO: options for the distribution along the z-axis
 
 Tolerance = 1e-10
@@ -48,6 +51,9 @@ parser.add_argument("--section", default = '[-1]', help="The list of sections to
     relative z-coordinate of the (x, y)-plane. If s_k is outside of this range\
     the distribution integrated over z is plotted. ")
 parser.add_argument("-t", action='store_true', help = "Provide to plot the distribution in the z-direction.")
+
+parser.add_argument('--noticks', action='store_true', 
+    help ="Set it to remove axes ticks and lables in density plots")
 
 # Arguments dealing with color schemes
 color_select = parser.add_mutually_exclusive_group()
@@ -232,6 +238,10 @@ def show_density(state, lat, colors, ind) :
     ax.pcolor(x, y, -n_xy, cmap = colChoice)
     ax.scatter(lat[:,0], lat[:,1], c = colors, edgecolor = colors, marker = 'o', s = 3.0)
     ax.autoscale(tight=True)
+
+    if args.noticks :
+        ax.xaxis.set_visible(False)
+        ay.xaxis.set_visible(False)
 
     return fig, ax
 
